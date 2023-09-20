@@ -11,16 +11,16 @@ class ReaderModeTests: BaseTestCase {
     func testLoadReaderContent() {
         navigator.openURL(path(forTestPage: "test-mozilla-book.html"))
         navigator.goto(BrowserTab)
-        mozWaitForElementToNotExist(app.staticTexts["Fennec pasted from XCUITests-Runner"])
-        mozWaitForElementToExist(app.buttons["Reader View"], timeout: TIMEOUT)
+        waitForNoExistence(app.staticTexts["Fennec pasted from XCUITests-Runner"])
+        waitForExistence(app.buttons["Reader View"], timeout: TIMEOUT)
         app.buttons["Reader View"].tap()
         // The settings of reader view are shown as well as the content of the web site
-        mozWaitForElementToExist(app.buttons["Display Settings"], timeout: TIMEOUT)
+        waitForExistence(app.buttons["Display Settings"], timeout: TIMEOUT)
         XCTAssertTrue(app.webViews.staticTexts["The Book of Mozilla"].exists)
     }
 
     private func checkReadingListNumberOfItems(items: Int) {
-        mozWaitForElementToExist(app.tables["ReadingTable"])
+        waitForExistence(app.tables["ReadingTable"])
         let list = app.tables["ReadingTable"].cells.count
         XCTAssertEqual(list, items, "The number of items in the reading table is not correct")
     }
@@ -43,7 +43,7 @@ class ReaderModeTests: BaseTestCase {
 
         // Check that there is one item
         let savedToReadingList = app.tables["ReadingTable"].cells.staticTexts["The Book of Mozilla"]
-        mozWaitForElementToExist(savedToReadingList)
+        waitForExistence(savedToReadingList)
         XCTAssertTrue(savedToReadingList.exists)
         checkReadingListNumberOfItems(items: 1)
     }
@@ -53,7 +53,7 @@ class ReaderModeTests: BaseTestCase {
         navigator.nowAt(NewTabScreen)
         navigator.toggleOn(userState.isPrivate, withAction: Action.TogglePrivateMode)
         navigator.performAction(Action.OpenNewTabFromTabTray)
-        mozWaitForElementToExist(app.buttons["urlBar-cancel"], timeout: TIMEOUT)
+        waitForExistence(app.buttons["urlBar-cancel"], timeout: TIMEOUT)
         navigator.performAction(Action.CloseURLBarOpen)
         navigator.nowAt(NewTabScreen)
         waitForTabsButton()
@@ -70,7 +70,7 @@ class ReaderModeTests: BaseTestCase {
 
         // Check that there is one item
         let savedToReadingList = app.tables["ReadingTable"].cells.staticTexts["The Book of Mozilla"]
-        mozWaitForElementToExist(savedToReadingList)
+        waitForExistence(savedToReadingList)
         XCTAssertTrue(savedToReadingList.exists)
         checkReadingListNumberOfItems(items: 1)
         app.buttons["Done"].tap()
@@ -78,7 +78,7 @@ class ReaderModeTests: BaseTestCase {
         // Check that it appears on regular mode
         navigator.toggleOff(userState.isPrivate, withAction: Action.ToggleRegularMode)
         navigator.performAction(Action.OpenNewTabFromTabTray)
-        mozWaitForElementToExist(app.buttons["urlBar-cancel"], timeout: TIMEOUT)
+        waitForExistence(app.buttons["urlBar-cancel"], timeout: TIMEOUT)
         navigator.performAction(Action.CloseURLBarOpen)
         navigator.nowAt(NewTabScreen)
         waitForTabsButton()
@@ -92,22 +92,22 @@ class ReaderModeTests: BaseTestCase {
 
         // Mark the content as read, so the mark as unread buttons appear
         app.buttons["Mark as Read"].tap()
-        mozWaitForElementToExist(app.buttons["Mark as Unread"])
+        waitForExistence(app.buttons["Mark as Unread"])
 
         // Mark the content as unread, so the mark as read button appear
         app.buttons["Mark as Unread"].tap()
-        mozWaitForElementToExist(app.buttons["Mark as Read"])
+        waitForExistence(app.buttons["Mark as Read"])
     }
 
     // https://testrail.stage.mozaws.net/index.php?/cases/view/2287280
     func testRemoveFromReadingView() {
         addContentToReaderView()
         // Once the content has been added, remove it
-        mozWaitForElementToExist(app.buttons["Remove from Reading List"])
+        waitForExistence(app.buttons["Remove from Reading List"])
         app.buttons["Remove from Reading List"].tap()
 
         // Check that instead of the remove icon now it is shown the add to read list
-        mozWaitForElementToExist(app.buttons["Add to Reading List"])
+        waitForExistence(app.buttons["Add to Reading List"])
 
         // Go to reader list view to check that there is not any item there
         navigator.goto(BrowserTabMenu)
@@ -122,7 +122,7 @@ class ReaderModeTests: BaseTestCase {
         navigator.goto(BrowserTabMenu)
         navigator.goto(LibraryPanel_ReadingList)
 
-        mozWaitForElementToExist(app.tables["ReadingTable"])
+        waitForExistence(app.tables["ReadingTable"])
         // Check that there is one item
         let savedToReadingList = app.tables["ReadingTable"].cells.staticTexts["The Book of Mozilla"]
         XCTAssertTrue(savedToReadingList.exists)
@@ -132,10 +132,10 @@ class ReaderModeTests: BaseTestCase {
             throw XCTSkip("swipeLeft() does not work on M1")
         } else {
             savedToReadingList.swipeLeft()
-            mozWaitForElementToExist(app.tables.cells.buttons.staticTexts["Mark as  Read"], timeout: TIMEOUT)
+            waitForExistence(app.tables.cells.buttons.staticTexts["Mark as  Read"], timeout: TIMEOUT)
             app.tables["ReadingTable"].cells.buttons.element(boundBy: 1).tap()
             savedToReadingList.swipeLeft()
-            mozWaitForElementToExist(app.tables.cells.buttons.staticTexts["Mark as  Unread"])
+            waitForExistence(app.tables.cells.buttons.staticTexts["Mark as  Unread"])
         }
     }
 
@@ -146,16 +146,16 @@ class ReaderModeTests: BaseTestCase {
         navigator.goto(LibraryPanel_ReadingList)
 
         let savedToReadingList = app.tables["ReadingTable"].cells.staticTexts["The Book of Mozilla"]
-        mozWaitForElementToExist(savedToReadingList)
+        waitForExistence(savedToReadingList)
 
         // Remove the item from reading list
         if processIsTranslatedStr() == m1Rosetta {
             savedToReadingList.press(forDuration: 2)
-            mozWaitForElementToExist(app.otherElements["Remove"])
+            waitForExistence(app.otherElements["Remove"])
             app.otherElements["Remove"].tap()
         } else {
             savedToReadingList.swipeLeft()
-            mozWaitForElementToExist(app.buttons["Remove"])
+            waitForExistence(app.buttons["Remove"])
             app.buttons["Remove"].tap()
         }
         XCTAssertFalse(savedToReadingList.exists)
@@ -193,11 +193,11 @@ class ReaderModeTests: BaseTestCase {
 
         // Long tap on the item just saved
         let savedToReadingList = app.tables["ReadingTable"].cells.staticTexts["The Book of Mozilla"]
-        mozWaitForElementToExist(savedToReadingList)
+        waitForExistence(savedToReadingList)
         savedToReadingList.press(forDuration: 1)
 
         // Select to open in New Tab
-        mozWaitForElementToExist(app.tables["Context Menu"])
+        waitForExistence(app.tables["Context Menu"])
         app.tables.otherElements[StandardImageIdentifiers.Large.plus].tap()
         updateScreenGraph()
         // Now there should be two tabs open
@@ -214,13 +214,13 @@ class ReaderModeTests: BaseTestCase {
 
         // Long tap on the item just saved and choose remove
         let savedToReadingList = app.tables["ReadingTable"].cells.staticTexts["The Book of Mozilla"]
-        mozWaitForElementToExist(savedToReadingList)
+        waitForExistence(savedToReadingList)
         savedToReadingList.press(forDuration: 1)
-        mozWaitForElementToExist(app.tables["Context Menu"])
+        waitForExistence(app.tables["Context Menu"])
         app.tables.otherElements[StandardImageIdentifiers.Large.cross].tap()
 
         // Verify the item has been removed
-        mozWaitForElementToNotExist(app.tables["ReadingTable"].cells.staticTexts["The Book of Mozilla"])
+        waitForNoExistence(app.tables["ReadingTable"].cells.staticTexts["The Book of Mozilla"])
         XCTAssertFalse(app.tables["ReadingTable"].cells.staticTexts["The Book of Mozilla"].exists)
     }
 
@@ -228,11 +228,11 @@ class ReaderModeTests: BaseTestCase {
     // Smoketest
     func testAddToReaderListOptions() throws {
         XCTExpectFailure("The app was not launched", strict: false) {
-            mozWaitForElementToExist(app.collectionViews["FxCollectionView"], timeout: TIMEOUT)
+            waitForExistence(app.collectionViews["FxCollectionView"], timeout: TIMEOUT)
         }
         addContentToReaderView()
         // Check that Settings layouts options are shown
-        mozWaitForElementToExist(app.buttons["ReaderModeBarView.settingsButton"], timeout: TIMEOUT)
+        waitForExistence(app.buttons["ReaderModeBarView.settingsButton"], timeout: TIMEOUT)
         app.buttons["ReaderModeBarView.settingsButton"].tap()
         let layoutOptions = ["Light", "Sepia", "Dark", "Decrease text size", "Reset text size", "Increase text size",
                              "Share this page", "Remove from Reading List"]

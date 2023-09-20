@@ -160,7 +160,7 @@ class FakespotViewController: UIViewController, Themeable, UIAdaptivePresentatio
     private func updateContent() {
         contentStackView.removeAllArrangedViews()
 
-        viewModel.viewElements.forEach { element in
+        viewModel.state.viewElements.forEach { element in
             guard let view = createContentView(viewElement: element) else { return }
             contentStackView.addArrangedSubview(view)
 
@@ -175,12 +175,6 @@ class FakespotViewController: UIViewController, Themeable, UIAdaptivePresentatio
         switch viewElement {
         case .loadingView:
             let view: FakespotLoadingView = .build()
-            return view
-
-        case .onboarding:
-            let viewModel = FakespotOptInCardViewModel()
-            let view: FakespotOptInCardView = .build()
-            view.configure(viewModel)
             return view
 
         case .reliabilityCard:
@@ -209,7 +203,7 @@ class FakespotViewController: UIViewController, Themeable, UIAdaptivePresentatio
         case .settingsCard:
             let view: FakespotSettingsCardView = .build()
             view.configure(viewModel.settingsCardViewModel)
-            viewModel.settingsCardViewModel.dismissViewController = { [weak self] in
+            viewModel.settingsCardViewModel.onTapTurnOffButton = { [weak self] in
                 guard let self = self else { return }
                 self.delegate?.fakespotControllerDidDismiss()
             }
@@ -220,14 +214,9 @@ class FakespotViewController: UIViewController, Themeable, UIAdaptivePresentatio
             view.configure(viewModel.noAnalysisCardViewModel)
             return view
 
-        case .genericError:
+        case .messageCard:
             let view: FakespotMessageCardView = .build()
-            view.configure(viewModel.genericErrorViewModel)
-            return view
-
-        case .noConnectionError:
-            let view: FakespotMessageCardView = .build()
-            view.configure(viewModel.noConnectionViewModel)
+            view.configure(viewModel.errorCardViewModel)
             return view
         }
     }

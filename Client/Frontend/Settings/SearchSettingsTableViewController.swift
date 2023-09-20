@@ -294,10 +294,8 @@ class SearchSettingsTableViewController: ThemedTableViewController {
             let index = indexPath.item + 1
             let engine = model.orderedEngines[index]
 
-            model.deleteCustomEngine(engine) { [weak self] in
+            model.deleteCustomEngine(engine) {
                 tableView.deleteRows(at: [indexPath], with: .right)
-                // Change navigationItem's right button item title to Edit and disable the edit button once the deletion is done
-                self?.setEditing(false, animated: true)
             }
 
             // End editing if we are no longer edit since we've deleted all editable cells.

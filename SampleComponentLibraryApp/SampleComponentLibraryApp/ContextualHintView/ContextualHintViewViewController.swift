@@ -7,27 +7,11 @@ import Common
 import Foundation
 import UIKit
 
-class ContextualHintViewViewController: UIViewController, Themeable {
+class ContextualHintViewViewController: UIViewController {
     private lazy var hintView: ContextualHintView = .build { _ in }
-
-    var themeManager: ThemeManager
-    var themeObserver: NSObjectProtocol?
-    var notificationCenter: NotificationProtocol = NotificationCenter.default
-
-    init(themeManager: ThemeManager = AppContainer.shared.resolve()) {
-        self.themeManager = themeManager
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        listenForThemeChange(view)
-        applyTheme()
-
         var viewModel = ContextualHintViewModel(
             isActionType: true,
             actionButtonTitle: "This button has an action",
@@ -64,6 +48,9 @@ class ContextualHintViewViewController: UIViewController, Themeable {
             hintView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             hintView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+
+        let themeManager: ThemeManager = AppContainer.shared.resolve()
+        hintView.applyTheme(theme: themeManager.currentTheme)
     }
 
     override func viewDidLayoutSubviews() {
@@ -71,8 +58,4 @@ class ContextualHintViewViewController: UIViewController, Themeable {
         let targetSize = CGSize(width: 350, height: UIView.layoutFittingCompressedSize.height)
         preferredContentSize = hintView.systemLayoutSizeFitting(targetSize)
     }
-
-    // MARK: Themeable
-
-    func applyTheme() {}
 }

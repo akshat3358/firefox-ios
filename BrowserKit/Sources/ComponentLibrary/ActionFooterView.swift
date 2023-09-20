@@ -10,20 +10,17 @@ public struct ActionFooterViewModel {
     let actionTitle: String
     let a11yTitleIdentifier: String
     let a11yActionIdentifier: String
-    let onTap: (() -> Void)
 
     public init(
         title: String,
         actionTitle: String,
         a11yTitleIdentifier: String,
-        a11yActionIdentifier: String,
-        onTap: @escaping (() -> Void)
+        a11yActionIdentifier: String
     ) {
         self.title = title
         self.actionTitle = actionTitle
         self.a11yTitleIdentifier = a11yTitleIdentifier
         self.a11yActionIdentifier = a11yActionIdentifier
-        self.onTap = onTap
     }
 }
 
@@ -32,8 +29,6 @@ public final class ActionFooterView: UIView, ThemeApplicable {
         static let labelSize: CGFloat = 13
         static let buttonSize: CGFloat = 13
     }
-
-    private var viewModel: ActionFooterViewModel?
 
     private lazy var titleLabel: UILabel = .build { label in
         label.font = DefaultDynamicFontHelper.preferredFont(
@@ -49,7 +44,6 @@ public final class ActionFooterView: UIView, ThemeApplicable {
             size: UX.buttonSize)
         button.buttonEdgeSpacing = 0
         button.contentHorizontalAlignment = .leading
-        button.addTarget(self, action: #selector(self.didTapButton), for: .touchUpInside)
     }
 
     override init(frame: CGRect) {
@@ -63,17 +57,11 @@ public final class ActionFooterView: UIView, ThemeApplicable {
     }
 
     public func configure(viewModel: ActionFooterViewModel) {
-        self.viewModel = viewModel
         titleLabel.text = viewModel.title
         primaryButton.setTitle(viewModel.actionTitle, for: .normal)
 
         titleLabel.accessibilityIdentifier = viewModel.a11yTitleIdentifier
         primaryButton.accessibilityIdentifier = viewModel.a11yActionIdentifier
-    }
-
-    @objc
-    private func didTapButton() {
-        viewModel?.onTap()
     }
 
     private func setupLayout() {

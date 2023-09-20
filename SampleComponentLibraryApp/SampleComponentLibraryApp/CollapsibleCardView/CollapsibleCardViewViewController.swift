@@ -7,7 +7,39 @@ import Common
 import Foundation
 import UIKit
 
-class CollapsibleCardViewViewController: UIViewController, Themeable {
+class CollapsibleCardViewViewController: UIViewController {
+    class CardContentView: UIView, ThemeApplicable {
+        lazy var contentLabel: UILabel = .build { label in
+            label.adjustsFontForContentSizeCategory = true
+            label.numberOfLines = 0
+        }
+
+        // MARK: - Inits
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+            setupView()
+        }
+
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+
+        func applyTheme(theme: Common.Theme) {
+            contentLabel.textColor = theme.colors.textPrimary
+        }
+
+        private func setupView() {
+            addSubview(contentLabel)
+
+            NSLayoutConstraint.activate([
+                contentLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+                contentLabel.topAnchor.constraint(equalTo: topAnchor),
+                contentLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+                contentLabel.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor)
+            ])
+        }
+    }
+
     private let loremIpsum =
     """
     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
@@ -16,29 +48,14 @@ class CollapsibleCardViewViewController: UIViewController, Themeable {
     sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
     """
 
-    var themeManager: ThemeManager
-    var themeObserver: NSObjectProtocol?
-    var notificationCenter: NotificationProtocol = NotificationCenter.default
-
     private lazy var cardView: CollapsibleCardView = .build { _ in }
     private lazy var contentView: CardContentView = .build { _ in }
-
-    init(themeManager: ThemeManager = AppContainer.shared.resolve()) {
-        self.themeManager = themeManager
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
 
-        listenForThemeChange(view)
-        applyTheme()
-
+        view.backgroundColor = .white
         contentView.contentLabel.text = loremIpsum
         let viewModel = CollapsibleCardViewModel(
             contentView: contentView,
@@ -50,6 +67,7 @@ class CollapsibleCardViewViewController: UIViewController, Themeable {
             expandButtonA11yLabelCollapsed: "Expand card")
         cardView.configure(viewModel)
 
+        let themeManager: ThemeManager = AppContainer.shared.resolve()
         cardView.applyTheme(theme: themeManager.currentTheme)
     }
 
@@ -63,11 +81,5 @@ class CollapsibleCardViewViewController: UIViewController, Themeable {
             cardView.bottomAnchor.constraint(lessThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor,
                                              constant: -20)
         ])
-    }
-
-    // MARK: Themeable
-
-    func applyTheme() {
-        view.backgroundColor = themeManager.currentTheme.colors.layer1
     }
 }

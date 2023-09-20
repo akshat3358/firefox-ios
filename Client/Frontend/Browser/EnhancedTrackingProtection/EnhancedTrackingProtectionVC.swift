@@ -363,7 +363,11 @@ class EnhancedTrackingProtectionMenuVC: UIViewController, Themeable {
 
     @objc
     func closeButtonTapped() {
-        enhancedTrackingProtectionMenuDelegate?.didFinish()
+        if CoordinatorFlagManager.isEtpCoordinatorEnabled {
+            enhancedTrackingProtectionMenuDelegate?.didFinish()
+        } else {
+            self.dismiss(animated: true, completion: nil)
+        }
     }
 
     @objc
@@ -382,7 +386,13 @@ class EnhancedTrackingProtectionMenuVC: UIViewController, Themeable {
 
     @objc
     func protectionSettingsTapped() {
-        enhancedTrackingProtectionMenuDelegate?.settingsOpenPage(settings: .contentBlocker)
+        if CoordinatorFlagManager.isEtpCoordinatorEnabled {
+             enhancedTrackingProtectionMenuDelegate?.settingsOpenPage(settings: .contentBlocker)
+         } else {
+             self.dismiss(animated: true) {
+                 self.viewModel.onOpenSettingsTapped?()
+             }
+         }
     }
 
     // MARK: - Gesture Recognizer
@@ -409,7 +419,11 @@ class EnhancedTrackingProtectionMenuVC: UIViewController, Themeable {
         if sender.state == .ended {
             let dragVelocity = sender.velocity(in: view)
             if dragVelocity.y >= 1300 {
-                enhancedTrackingProtectionMenuDelegate?.didFinish()
+                if CoordinatorFlagManager.isEtpCoordinatorEnabled {
+                    enhancedTrackingProtectionMenuDelegate?.didFinish()
+                } else {
+                    self.dismiss(animated: true, completion: nil)
+                }
             } else {
                 // Set back to original position of the view controller
                 UIView.animate(withDuration: 0.3) {

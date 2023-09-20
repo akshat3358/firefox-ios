@@ -6,10 +6,12 @@ import Foundation
 import UIKit
 import Common
 
-class ComponentCell: UITableViewCell, ThemeApplicable {
+class ComponentCell: UITableViewCell {
     static var cellIdentifier: String { return String(describing: self) }
 
     private lazy var label: UILabel = .build { label in
+        label.backgroundColor = .lightGray
+        label.textColor = .black
         label.layer.cornerRadius = 8
         label.clipsToBounds = true
         label.textAlignment = .center
@@ -26,6 +28,7 @@ class ComponentCell: UITableViewCell, ThemeApplicable {
     }
 
     func initialViewSetup() {
+        contentView.backgroundColor = .clear
         contentView.addSubview(label)
 
         NSLayoutConstraint.activate([
@@ -39,14 +42,5 @@ class ComponentCell: UITableViewCell, ThemeApplicable {
 
     func setup(_ data: ComponentViewModel) {
         label.text = data.title
-    }
-
-    // MARK: ThemeApplicable
-
-    func applyTheme(theme: Theme) {
-        backgroundColor = .clear
-        contentView.backgroundColor = .clear
-        label.backgroundColor = theme.colors.actionPrimary
-        label.textColor = theme.colors.textInverted
     }
 }

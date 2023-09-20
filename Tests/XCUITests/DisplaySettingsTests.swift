@@ -8,7 +8,7 @@ class DisplaySettingTests: BaseTestCase {
     func testCheckDisplaySettingsDefault() {
         navigator.nowAt(NewTabScreen)
         navigator.goto(DisplaySettings)
-        mozWaitForElementToExist(app.navigationBars["Theme"])
+        waitForExistence(app.navigationBars["Theme"])
         XCTAssertTrue(app.tables["DisplayTheme.Setting.Options"].exists)
         let switchValue = app.switches["SystemThemeSwitchValue"].value!
         XCTAssertEqual(switchValue as! String, "1")
@@ -17,14 +17,14 @@ class DisplaySettingTests: BaseTestCase {
     func testCheckSystemThemeChanges() {
         navigator.nowAt(NewTabScreen)
         navigator.goto(DisplaySettings)
-        mozWaitForElementToExist(app.switches["SystemThemeSwitchValue"])
+        waitForExistence(app.switches["SystemThemeSwitchValue"])
         navigator.performAction(Action.SystemThemeSwitch)
-        mozWaitForElementToExist(app.tables["DisplayTheme.Setting.Options"].otherElements.staticTexts["SWITCH MODE"])
+        waitForExistence(app.tables["DisplayTheme.Setting.Options"].otherElements.staticTexts["SWITCH MODE"])
 
         // Going back to Settings and Display settings keeps the value
         navigator.goto(SettingsScreen)
         navigator.goto(DisplaySettings)
-        mozWaitForElementToExist(app.switches["SystemThemeSwitchValue"])
+        waitForExistence(app.switches["SystemThemeSwitchValue"])
         let switchValue = app.switches["SystemThemeSwitchValue"].value!
         XCTAssertEqual(switchValue as! String, "0")
         XCTAssertTrue(app.cells.staticTexts["Light"].exists)

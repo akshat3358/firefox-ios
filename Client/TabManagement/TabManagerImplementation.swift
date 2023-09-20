@@ -116,11 +116,8 @@ class TabManagerImplementation: LegacyTabManager, Notifiable {
             tabRestoreHasFinished = true
         }
 
-        let nonPrivateTabs = window?.tabData.filter { !$0.isPrivate }
-
         guard let windowData = window,
-              let nonPrivateTabs,
-              !nonPrivateTabs.isEmpty,
+              !windowData.tabData.isEmpty,
               tabs.isEmpty
         else {
             // Always make sure there is a single normal tab

@@ -34,6 +34,9 @@ final class NimbusFeatureFlagLayer {
         case .libraryCoordinatorRefactor:
             return checkLibraryCoordinatorRefactorFeature(from: nimbus)
 
+        case .etpCoordinatorRefactor:
+            return checkEtpCoordinatorRefactorFeature(from: nimbus)
+
         case .fakespotFeature:
             return checkFakespotFeature(from: nimbus)
 
@@ -56,6 +59,9 @@ final class NimbusFeatureFlagLayer {
                 .shareToolbarChanges:
             return checkNimbusForShareSheet(for: featureID, from: nimbus)
 
+        case .startAtHome:
+            return checkNimbusConfigForStartAtHome(using: nimbus) != .disabled
+
         case .tabTrayRefactor:
             return checkTabTrayRefactorFeature(from: nimbus)
 
@@ -71,6 +77,17 @@ final class NimbusFeatureFlagLayer {
 
         case .zoomFeature:
             return checkZoomFeature(from: nimbus)
+        }
+    }
+
+    public func checkNimbusConfigForStartAtHome(using nimbus: FxNimbus = FxNimbus.shared) -> StartAtHomeSetting {
+        let config = nimbus.features.startAtHomeFeature.value()
+        let nimbusSetting = config.setting
+
+        switch nimbusSetting {
+        case .disabled: return .disabled
+        case .afterFourHours: return .afterFourHours
+        case .always: return .always
         }
     }
 
@@ -146,6 +163,11 @@ final class NimbusFeatureFlagLayer {
 
     private func checkShareExtensionCoordinatorRefactorFeature(from nimbus: FxNimbus) -> Bool {
         let config = nimbus.features.shareExtensionCoordinatorRefactor.value()
+        return config.enabled
+    }
+
+    private func checkEtpCoordinatorRefactorFeature(from nimbus: FxNimbus) -> Bool {
+        let config = nimbus.features.etpCoordinatorRefactor.value()
         return config.enabled
     }
 

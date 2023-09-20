@@ -14,13 +14,13 @@ class ThirdPartySearchTest: BaseTestCase {
     func testCustomSearchEngines() {
         addCustomSearchEngine()
 
-        mozWaitForElementToExist(app.navigationBars["Search"].buttons["Settings"], timeout: 3)
+        waitForExistence(app.navigationBars["Search"].buttons["Settings"], timeout: 3)
         app.navigationBars["Search"].buttons["Settings"].tap()
         app.navigationBars["Settings"].buttons[AccessibilityIdentifiers.Settings.navigationBarItem].tap()
 
         // Perform a search using a custom search engine
         app.textFields["url"].tap()
-        mozWaitForElementToExist(app.buttons["urlBar-cancel"])
+        waitForExistence(app.buttons["urlBar-cancel"])
         if processIsTranslatedStr() == m1Rosetta {
             app.textFields.firstMatch.typeText("window")
         } else {
@@ -42,9 +42,9 @@ class ThirdPartySearchTest: BaseTestCase {
         addCustomSearchEngine()
 
         // Go to settings and set MDN as the default
-        mozWaitForElementToExist(app.tables.staticTexts["Google"])
+        waitForExistence(app.tables.staticTexts["Google"])
         app.tables.staticTexts["Google"].tap()
-        mozWaitForElementToExist(app.tables.staticTexts["Mozilla Engine"])
+        waitForExistence(app.tables.staticTexts["Mozilla Engine"])
         app.tables.staticTexts["Mozilla Engine"].tap()
         dismissSearchScreen()
 
@@ -70,12 +70,12 @@ class ThirdPartySearchTest: BaseTestCase {
 
     func testCustomSearchEngineDeletion() {
         addCustomSearchEngine()
-        mozWaitForElementToExist(app.navigationBars["Search"].buttons["Settings"], timeout: 3)
+        waitForExistence(app.navigationBars["Search"].buttons["Settings"], timeout: 3)
 
         app.navigationBars["Search"].buttons["Settings"].tap()
         app.navigationBars["Settings"].buttons[AccessibilityIdentifiers.Settings.navigationBarItem].tap()
         app.textFields["url"].tap()
-        mozWaitForElementToExist(app.buttons["urlBar-cancel"])
+        waitForExistence(app.buttons["urlBar-cancel"])
         if processIsTranslatedStr() == m1Rosetta {
             app.textFields.firstMatch.typeText("window")
         } else {
@@ -83,24 +83,24 @@ class ThirdPartySearchTest: BaseTestCase {
             app.textFields.firstMatch.press(forDuration: 1)
             app.staticTexts["Paste"].tap()
         }
-        mozWaitForElementToExist(app.scrollViews.otherElements.buttons["Mozilla Engine search"])
+        waitForExistence(app.scrollViews.otherElements.buttons["Mozilla Engine search"])
         XCTAssertTrue(app.scrollViews.otherElements.buttons["Mozilla Engine search"].exists)
 
         // Need to go step by step to Search Settings. The ScreenGraph will fail to go to the Search Settings Screen
-        mozWaitForElementToExist(app.buttons["urlBar-cancel"], timeout: 3)
+        waitForExistence(app.buttons["urlBar-cancel"], timeout: 3)
         app.buttons["urlBar-cancel"].tap()
         app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton].tap()
         app.tables["Context Menu"].otherElements["Settings"].tap()
-        mozWaitForElementToExist(app.tables.staticTexts["Google"])
+        waitForExistence(app.tables.staticTexts["Google"])
         app.tables.staticTexts["Google"].tap()
 
         navigator.performAction(Action.RemoveCustomSearchEngine)
         dismissSearchScreen()
 
         // Perform a search to check
-        mozWaitForElementToExist(app.textFields["url"], timeout: 3)
+        waitForExistence(app.textFields["url"], timeout: 3)
         app.textFields["url"].tap()
-        mozWaitForElementToExist(app.buttons["urlBar-cancel"])
+        waitForExistence(app.buttons["urlBar-cancel"])
        if processIsTranslatedStr() == m1Rosetta {
             app.textFields.firstMatch.typeText("window")
         } else {
@@ -109,7 +109,7 @@ class ThirdPartySearchTest: BaseTestCase {
             app.staticTexts["Paste"].tap()
         }
 
-        mozWaitForElementToNotExist(app.scrollViews.otherElements.buttons["Mozilla Engine search"])
+        waitForNoExistence(app.scrollViews.otherElements.buttons["Mozilla Engine search"])
         XCTAssertFalse(app.scrollViews.otherElements.buttons["Mozilla Engine search"].exists)
     }
 
@@ -117,12 +117,12 @@ class ThirdPartySearchTest: BaseTestCase {
         waitForTabsButton()
         navigator.nowAt(NewTabScreen)
         navigator.performAction(Action.AddCustomSearchEngine)
-        mozWaitForElementToExist(app.buttons["customEngineSaveButton"], timeout: 3)
+        waitForExistence(app.buttons["customEngineSaveButton"], timeout: 3)
         app.buttons["customEngineSaveButton"].tap()
     }
 
     private func dismissSearchScreen() {
-        mozWaitForElementToExist(app.navigationBars["Search"].buttons["Settings"])
+        waitForExistence(app.navigationBars["Search"].buttons["Settings"])
         app.navigationBars["Search"].buttons["Settings"].tap()
         app.navigationBars["Settings"].buttons[AccessibilityIdentifiers.Settings.navigationBarItem].tap()
     }
@@ -150,12 +150,12 @@ class ThirdPartySearchTest: BaseTestCase {
             app.staticTexts["Paste"].tap()
         }
 
-        mozWaitForElementToExist(app.buttons["customEngineSaveButton"], timeout: 3)
+        waitForExistence(app.buttons["customEngineSaveButton"], timeout: 3)
         app.buttons["customEngineSaveButton"].tap()
-        mozWaitForElementToExist(app.navigationBars["Add Search Engine"], timeout: 3)
+        waitForExistence(app.navigationBars["Add Search Engine"], timeout: 3)
         app.navigationBars["Add Search Engine"].buttons["Save"].tap()
 
-        mozWaitForElementToExist(app.alerts.element(boundBy: 0))
+        waitForExistence(app.alerts.element(boundBy: 0))
         XCTAssert(app.alerts.element(boundBy: 0).label == "Failed")
     }
 }

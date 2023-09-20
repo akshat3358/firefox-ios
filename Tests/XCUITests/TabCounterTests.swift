@@ -27,7 +27,7 @@ class TabCounterTests: BaseTestCase {
         if !iPad() {
             navigator.goto(TabTray)
             let navBarTabTrayButton = app.segmentedControls["navBarTabTray"].buttons.firstMatch
-            mozWaitForElementToExist(navBarTabTrayButton)
+            waitForExistence(navBarTabTrayButton)
             XCTAssertTrue(navBarTabTrayButton.isSelected)
             let tabsOpenTabTray: String = navBarTabTrayButton.label
             XCTAssertTrue(tabsOpenTabTray.hasSuffix("2"))
@@ -58,7 +58,7 @@ class TabCounterTests: BaseTestCase {
             app.otherElements["Tabs Tray"].collectionViews.cells.element(boundBy: 0).buttons[StandardImageIdentifiers.Large.cross].tap()
         } else {
             let navBarTabTrayButton = app.segmentedControls["navBarTabTray"].buttons.firstMatch
-            mozWaitForElementToExist(navBarTabTrayButton)
+            waitForExistence(navBarTabTrayButton)
             XCTAssertTrue(navBarTabTrayButton.isSelected)
             let tabsOpenTabTray: String = navBarTabTrayButton.label
             XCTAssertTrue(tabsOpenTabTray.hasSuffix("2"))
@@ -75,14 +75,14 @@ class TabCounterTests: BaseTestCase {
 
         navigator.goto(TabTray)
         if isTablet {
-            mozWaitForElementToExist(app.navigationBars["Client.LegacyTabTrayView"])
+            waitForExistence(app.navigationBars["Client.TabTrayView"])
         } else {
-            mozWaitForElementToExist(app.navigationBars["Open Tabs"])
+            waitForExistence(app.navigationBars["Open Tabs"])
         }
         tabsOpen = app.segmentedControls.buttons.element(boundBy: 0).label
         XCTAssertTrue(app.segmentedControls.buttons.element(boundBy: 0).isSelected)
         if !isTablet {
-            mozWaitForElementToExist(app.segmentedControls.firstMatch, timeout: 5)
+            waitForExistence(app.segmentedControls.firstMatch, timeout: 5)
             let tabsOpenTabTray: String = app.segmentedControls.buttons.firstMatch.label
             XCTAssertTrue(tabsOpenTabTray.hasSuffix("1"))
         }

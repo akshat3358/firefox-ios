@@ -10,15 +10,15 @@ class ClipBoardTests: BaseTestCase {
     // Check for test url in the browser
     func checkUrl() {
         let urlTextField = app.textFields["url"]
-        mozWaitForValueContains(urlTextField, value: "www.example")
+        waitForValueContains(urlTextField, value: "www.example")
     }
 
     // Copy url from the browser
     func copyUrl() {
         navigator.goto(URLBarOpen)
-        mozWaitForElementToExist(app.textFields["address"])
+        waitForExistence(app.textFields["address"])
         app.textFields["address"].tap()
-        mozWaitForElementToExist(app.menuItems["Copy"])
+        waitForExistence(app.menuItems["Copy"])
         app.menuItems["Copy"].tap()
         app.typeText("\r")
         navigator.nowAt(BrowserTab)
@@ -54,15 +54,15 @@ class ClipBoardTests: BaseTestCase {
         checkCopiedUrl()
 
         navigator.createNewTab()
-        mozWaitForElementToNotExist(app.staticTexts["XCUITests-Runner pasted from Fennec"])
+        waitForNoExistence(app.staticTexts["XCUITests-Runner pasted from Fennec"])
         navigator.nowAt(NewTabScreen)
         navigator.goto(URLBarOpen)
         app.textFields["address"].press(forDuration: 3)
         app.menuItems["Paste"].tap()
         if processIsTranslatedStr() == m1Rosetta {
-            mozWaitForElementToNotExist(app.menuItems["Paste"])
+            waitForNoExistence(app.menuItems["Paste"])
         } else {
-            mozWaitForValueContains(app.textFields["address"], value: "www.example.com")
+            waitForValueContains(app.textFields["address"], value: "www.example.com")
         }
     }
 
@@ -70,21 +70,21 @@ class ClipBoardTests: BaseTestCase {
     func testClipboardPasteAndGo() {
         navigator.openURL(url)
         waitUntilPageLoad()
-        mozWaitForElementToNotExist(app.staticTexts["Fennec pasted from XCUITests-Runner"])
-        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.shareButton], timeout: 10)
+        waitForNoExistence(app.staticTexts["Fennec pasted from XCUITests-Runner"])
+        waitForExistence(app.buttons[AccessibilityIdentifiers.Toolbar.shareButton], timeout: 10)
         app.buttons[AccessibilityIdentifiers.Toolbar.shareButton].tap()
-        mozWaitForElementToExist(app.cells["Copy"], timeout: 15)
+        waitForExistence(app.cells["Copy"], timeout: 15)
         app.cells["Copy"].tap()
 
         checkCopiedUrl()
-        mozWaitForElementToNotExist(app.staticTexts["XCUITests-Runner pasted from Fennec"])
+        waitForNoExistence(app.staticTexts["XCUITests-Runner pasted from Fennec"])
         navigator.createNewTab()
-        mozWaitForElementToNotExist(app.staticTexts["XCUITests-Runner pasted from Fennec"])
+        waitForNoExistence(app.staticTexts["XCUITests-Runner pasted from Fennec"])
         app.textFields["url"].press(forDuration: 3)
-        mozWaitForElementToExist(app.tables["Context Menu"])
-        mozWaitForElementToExist(app.tables["Context Menu"].otherElements[AccessibilityIdentifiers.Photon.pasteAndGoAction])
+        waitForExistence(app.tables["Context Menu"])
+        waitForExistence(app.tables["Context Menu"].otherElements[AccessibilityIdentifiers.Photon.pasteAndGoAction])
         app.tables["Context Menu"].otherElements[AccessibilityIdentifiers.Photon.pasteAndGoAction].tap()
-        mozWaitForElementToExist(app.textFields["url"])
-        mozWaitForValueContains(app.textFields["url"], value: "www.example.com")
+        waitForExistence(app.textFields["url"])
+        waitForValueContains(app.textFields["url"], value: "www.example.com")
     }
 }

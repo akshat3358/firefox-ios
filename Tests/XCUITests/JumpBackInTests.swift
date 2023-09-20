@@ -6,7 +6,7 @@ import XCTest
 
 class JumpBackInTests: BaseTestCase {
     func closeKeyboard() {
-        mozWaitForElementToExist(app.buttons["urlBar-cancel"])
+        waitForExistence(app.buttons["urlBar-cancel"])
         navigator.performAction(Action.CloseURLBarOpen)
         navigator.nowAt(NewTabScreen)
         waitForTabsButton()
@@ -41,7 +41,7 @@ class JumpBackInTests: BaseTestCase {
         closeKeyboard()
 
         // "Jump Back In" section is displayed
-        mozWaitForElementToExist(app.cells["JumpBackInCell"].firstMatch, timeout: TIMEOUT)
+        waitForExistence(app.cells["JumpBackInCell"].firstMatch, timeout: TIMEOUT)
         // The contextual hint box is not displayed consistently, so
         // I don't test for its existence.
     }
@@ -54,14 +54,14 @@ class JumpBackInTests: BaseTestCase {
 //
 //        // Open a new tab and check the "Jump Back In" section
 //        navigator.goto(TabTray)
-//        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.TabTray.newTabButton], timeout: TIMEOUT)
+//        waitForExistence(app.buttons[AccessibilityIdentifiers.TabTray.newTabButton], timeout: TIMEOUT)
 //        navigator.performAction(Action.OpenNewTabFromTabTray)
 //        closeKeyboard()
 //
 //        // Twitter tab is visible in the "Jump Back In" section
 //        scrollDown()
-//        mozWaitForElementToExist(app.cells["JumpBackInCell"].firstMatch)
-//        mozWaitForElementToExist(app.cells["JumpBackInCell"].staticTexts["Twitter"])
+//        waitForExistence(app.cells["JumpBackInCell"].firstMatch)
+//        waitForExistence(app.cells["JumpBackInCell"].staticTexts["Twitter"])
 //
 //        // Open private browsing
 //        navigator.goto(TabTray)
@@ -79,25 +79,25 @@ class JumpBackInTests: BaseTestCase {
 //
 //        // Twitter should be in "Jump Back In"
 //        scrollDown()
-//        mozWaitForElementToExist(app.cells["JumpBackInCell"].firstMatch)
-//        mozWaitForElementToExist(app.cells["JumpBackInCell"].staticTexts["Twitter"])
-//        mozWaitForElementToNotExist(app.cells["JumpBackInCell"].staticTexts["YouTube"])
+//        waitForExistence(app.cells["JumpBackInCell"].firstMatch)
+//        waitForExistence(app.cells["JumpBackInCell"].staticTexts["Twitter"])
+//        waitForNoExistence(app.cells["JumpBackInCell"].staticTexts["YouTube"])
 //
 //        // Visit "amazon.com" and check the "Jump Back In" section
 //        navigator.openURL("https://www.amazon.com")
 //        waitUntilPageLoad()
 //
 //        navigator.goto(TabTray)
-//        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.TabTray.newTabButton], timeout: TIMEOUT)
+//        waitForExistence(app.buttons[AccessibilityIdentifiers.TabTray.newTabButton], timeout: TIMEOUT)
 //        navigator.performAction(Action.OpenNewTabFromTabTray)
 //        closeKeyboard()
 //
 //        // Amazon and Twitter are visible in the "Jump Back In" section
 //        scrollDown()
-//        mozWaitForElementToExist(app.cells["JumpBackInCell"].firstMatch)
-//        mozWaitForElementToExist(app.cells["JumpBackInCell"].staticTexts["Amazon"])
-//        mozWaitForElementToExist(app.cells["JumpBackInCell"].staticTexts["Twitter"])
-//        mozWaitForElementToNotExist(app.cells["JumpBackInCell"].staticTexts["YouTube"])
+//        waitForExistence(app.cells["JumpBackInCell"].firstMatch)
+//        waitForExistence(app.cells["JumpBackInCell"].staticTexts["Amazon"])
+//        waitForExistence(app.cells["JumpBackInCell"].staticTexts["Twitter"])
+//        waitForNoExistence(app.cells["JumpBackInCell"].staticTexts["YouTube"])
 //
 //        // Tap on Twitter from "Jump Back In"
 //        app.cells["JumpBackInCell"].staticTexts["Twitter"].tap()
@@ -108,37 +108,37 @@ class JumpBackInTests: BaseTestCase {
 //
 //        // Open a new tab in normal browsing
 //        navigator.goto(TabTray)
-//        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.TabTray.newTabButton], timeout: TIMEOUT)
+//        waitForExistence(app.buttons[AccessibilityIdentifiers.TabTray.newTabButton], timeout: TIMEOUT)
 //        navigator.performAction(Action.OpenNewTabFromTabTray)
 //        closeKeyboard()
 //
 //        // Check the "Jump Back In Section"
 //        scrollDown()
-//        mozWaitForElementToExist(app.cells["JumpBackInCell"].firstMatch)
+//        waitForExistence(app.cells["JumpBackInCell"].firstMatch)
 //
 //        // Amazon is visible in "Jump Back In"
-//        mozWaitForElementToExist(app.cells["JumpBackInCell"].staticTexts["Amazon"])
+//        waitForExistence(app.cells["JumpBackInCell"].staticTexts["Amazon"])
 //
 //        // Close the amazon tab
 //        navigator.goto(TabTray)
 //        if isTablet {
-//            mozWaitForElementToExist(app.navigationBars.segmentedControls["navBarTabTray"])
+//            waitForExistence(app.navigationBars.segmentedControls["navBarTabTray"])
 //        } else {
-//            mozWaitForElementToExist(app.navigationBars.staticTexts["Open Tabs"])
+//            waitForExistence(app.navigationBars.staticTexts["Open Tabs"])
 //        }
 //        app.cells["Amazon.com. Spend less. Smile more."].buttons[StandardImageIdentifiers.Large.cross].tap()
 //
 //        // Revisit the "Jump Back In" section
-//        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.TabTray.newTabButton], timeout: TIMEOUT)
+//        waitForExistence(app.buttons[AccessibilityIdentifiers.TabTray.newTabButton], timeout: TIMEOUT)
 //        navigator.performAction(Action.OpenNewTabFromTabTray)
 //        closeKeyboard()
 //
 //        // The "Jump Back In" section is still here with twitter listed
 //        scrollDown()
-//        mozWaitForElementToExist(app.cells["JumpBackInCell"].firstMatch)
+//        waitForExistence(app.cells["JumpBackInCell"].firstMatch)
 //        // FXIOS-5448 - Amazon should not be listed because we've closed the Amazon tab
-//        // mozWaitForElementToNotExist(app.cells["JumpBackInCell"].staticTexts["Amazon"])
-//        mozWaitForElementToExist(app.cells["JumpBackInCell"].staticTexts["Twitter"])
-//        mozWaitForElementToNotExist(app.cells["JumpBackInCell"].staticTexts["YouTube"])
+//        // waitForNoExistence(app.cells["JumpBackInCell"].staticTexts["Amazon"])
+//        waitForExistence(app.cells["JumpBackInCell"].staticTexts["Twitter"])
+//        waitForNoExistence(app.cells["JumpBackInCell"].staticTexts["YouTube"])
     }
 }

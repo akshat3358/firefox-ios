@@ -7,11 +7,7 @@ import ComponentLibrary
 import Foundation
 import UIKit
 
-class ButtonsViewController: UIViewController, Themeable {
-    var themeManager: ThemeManager
-    var themeObserver: NSObjectProtocol?
-    var notificationCenter: NotificationProtocol = NotificationCenter.default
-
+class ButtonsViewController: UIViewController {
     private lazy var primaryButton: PrimaryRoundedButton = .build { _ in }
     private lazy var secondaryButton: SecondaryRoundedButton = .build { _ in }
 
@@ -22,22 +18,11 @@ class ButtonsViewController: UIViewController, Themeable {
         stackView.spacing = 16
     }
 
-    init(themeManager: ThemeManager = AppContainer.shared.resolve()) {
-        self.themeManager = themeManager
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        listenForThemeChange(view)
-        applyTheme()
-
         setupView()
 
+        view.backgroundColor = .white
         let primaryViewModel = PrimaryRoundedButtonViewModel(title: "Primary",
                                                              a11yIdentifier: "a11yPrimary")
         primaryButton.configure(viewModel: primaryViewModel)
@@ -46,6 +31,7 @@ class ButtonsViewController: UIViewController, Themeable {
                                                                  a11yIdentifier: "a11ySecondary")
         secondaryButton.configure(viewModel: secondaryViewModel)
 
+        let themeManager: ThemeManager = AppContainer.shared.resolve()
         primaryButton.applyTheme(theme: themeManager.currentTheme)
         secondaryButton.applyTheme(theme: themeManager.currentTheme)
     }
@@ -60,12 +46,5 @@ class ButtonsViewController: UIViewController, Themeable {
             buttonStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             buttonStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])
-    }
-
-    // MARK: Themeable
-
-    func applyTheme() {
-        view.backgroundColor = themeManager.currentTheme.colors.layer1
-        buttonStackView.backgroundColor = .clear
     }
 }

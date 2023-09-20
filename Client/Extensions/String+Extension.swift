@@ -61,7 +61,7 @@ extension String {
     ///                                                        initialFont: initialFont,
     ///                                                        boldFont: boldFont)
     ///   ```
-    func attributedText(boldPartsOfString: [String],
+    func attributedText(boldPartsOfString: [NSString],
                         initialFont: UIFont,
                         boldFont: UIFont) -> NSAttributedString {
         let nsString = self as NSString

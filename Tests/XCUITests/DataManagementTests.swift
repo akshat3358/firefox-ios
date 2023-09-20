@@ -10,22 +10,22 @@ class DataManagementTests: BaseTestCase {
         navigator.nowAt(NewTabScreen)
         waitForTabsButton()
         navigator.goto(WebsiteDataSettings)
-        mozWaitForElementToExist(app.tables.otherElements["Website Data"], timeout: 3)
+        waitForExistence(app.tables.otherElements["Website Data"], timeout: 3)
         app.tables.otherElements["Website Data"].swipeDown()
-        mozWaitForElementToExist(app.searchFields["Filter Sites"], timeout: 3)
+        waitForExistence(app.searchFields["Filter Sites"], timeout: 3)
         navigator.performAction(Action.TapOnFilterWebsites)
         app.typeText("bing")
-        mozWaitForElementToExist(app.tables["Search results"])
+        waitForExistence(app.tables["Search results"])
         let expectedSearchResults = app.tables["Search results"].cells.count
         sleep(3)
         XCTAssertEqual(expectedSearchResults, 1)
         navigator.performAction(Action.TapOnFilterWebsites)
 
         app.buttons["Cancel"].tap()
-        mozWaitForElementToExist(app.tables.otherElements["Website Data"], timeout: 3)
+        waitForExistence(app.tables.otherElements["Website Data"], timeout: 3)
 
         navigator.performAction(Action.AcceptClearAllWebsiteData)
-        mozWaitForElementToExist(app.tables.cells["ClearAllWebsiteData"].staticTexts["Clear All Website Data"])
+        waitForExistence(app.tables.cells["ClearAllWebsiteData"].staticTexts["Clear All Website Data"])
         let expectedWebsitesCleared = app.tables.cells.count
         XCTAssertEqual(expectedWebsitesCleared, 1)
     }

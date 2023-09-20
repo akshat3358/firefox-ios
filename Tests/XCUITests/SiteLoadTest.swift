@@ -22,15 +22,15 @@ class SiteLoadTest: BaseTestCase {
 
             navigator.performAction(Action.AcceptRemovingAllTabs)
             navigator.goto(BrowserTab)
-            mozWaitForElementToNotExist(app.staticTexts["1 tab(s) closed"])
+            waitForNoExistence(app.staticTexts["1 tab(s) closed"])
 
             // clear the cache
             navigator.goto(ClearPrivateDataSettings)
             app.tables.staticTexts["Clear Private Data"].tap()
-            mozWaitForElementToExist(app.alerts.buttons["OK"])
+            waitForExistence(app.alerts.buttons["OK"])
             app.alerts.buttons["OK"].tap()
             navigator.goto(BrowserTab)
-            mozWaitForElementToExist(app.textFields["url"])
+            waitForExistence(app.textFields["url"])
             counter += 1
         }
     }

@@ -14,13 +14,13 @@ class SearchSettingsUITests: BaseTestCase {
         navigator.goto(SearchSettings)
         // Check the default browser
         let defaultSearchEngine = app.tables.cells.element(boundBy: 0)
-        mozWaitForElementToExist(app.tables.cells.staticTexts[defaultSearchEngine1])
+        waitForExistence(app.tables.cells.staticTexts[defaultSearchEngine1])
 
         // Change to another browser and check it is set as default
         defaultSearchEngine.tap()
         let listOfEngines = app.tables
         listOfEngines.staticTexts[defaultSearchEngine2].tap()
-        mozWaitForElementToExist(app.tables.cells.staticTexts[defaultSearchEngine2])
+        waitForExistence(app.tables.cells.staticTexts[defaultSearchEngine2])
     }
 
     func testCustomSearchEngineIsEditable() {
@@ -29,28 +29,28 @@ class SearchSettingsUITests: BaseTestCase {
         // Add a custom search engine
         addCustomSearchEngine()
         // Check that the custom search appears on the list
-        mozWaitForElementToExist(app.tables.cells.staticTexts[customSearchEngine["name"]!])
+        waitForExistence(app.tables.cells.staticTexts[customSearchEngine["name"]!])
 
         // Check that it can be edited
         XCTAssertTrue(app.buttons["Edit"].isEnabled)
         app.buttons["Edit"].tap()
 
-        mozWaitForElementToExist(app.tables.buttons["Delete \(customSearchEngine["name"]!)"])
+        waitForExistence(app.tables.buttons["Delete \(customSearchEngine["name"]!)"])
     }
 
     private func addCustomSearchEngine() {
-        mozWaitForElementToExist(app.tables.cells[AccessibilityIdentifiers.Settings.Search.customEngineViewButton])
+        waitForExistence(app.tables.cells[AccessibilityIdentifiers.Settings.Search.customEngineViewButton])
         app.tables.cells[AccessibilityIdentifiers.Settings.Search.customEngineViewButton].tap()
-        mozWaitForElementToExist(app.tables.cells.staticTexts["Search Engine"])
+        waitForExistence(app.tables.cells.staticTexts["Search Engine"])
         app.tables.cells.textViews["customEngineTitle"].tap()
         app.tables.cells.textViews["customEngineTitle"].typeText(customSearchEngine["name"]!)
 
         app.tables.cells.textViews["customEngineUrl"].tap()
         app.tables.cells.textViews["customEngineUrl"].typeText(customSearchEngine["url"]!)
-        mozWaitForElementToExist(app.buttons["Save"], timeout: 5)
+        waitForExistence(app.buttons["Save"], timeout: 5)
         app.buttons["Save"].tap()
         // Check that custom engine has been added successfully
-        mozWaitForElementToExist(app.tables.cells.staticTexts[customSearchEngine["name"]!])
+        waitForExistence(app.tables.cells.staticTexts[customSearchEngine["name"]!])
     }
 
     func testCustomSearchEngineAsDefaultIsNotEditable() {
@@ -91,7 +91,7 @@ class SearchSettingsUITests: BaseTestCase {
 
         // Check to see we're not in editing state, edit is enable and done does not appear
         XCTAssertTrue(app.buttons["Edit"].isEnabled)
-        mozWaitForElementToNotExist(app.buttons["Done"])
+        waitForNoExistence(app.buttons["Done"])
 
         // Make sure switches are there
         XCTAssertEqual(app.tables.cells.switches.count, app.tables.cells.count - 2)

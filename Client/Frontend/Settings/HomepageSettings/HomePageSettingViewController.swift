@@ -79,7 +79,10 @@ class HomePageSettingViewController: SettingsTableViewController, FeatureFlaggab
     override func generateSettings() -> [SettingSection] {
         let customizeFirefoxHomeSection = customizeFirefoxSettingSection()
         let customizeHomePageSection = customizeHomeSettingSection()
-        let startAtHomeSection = setupStartAtHomeSection()
+
+        guard let startAtHomeSection = setupStartAtHomeSection() else {
+            return [customizeFirefoxHomeSection, customizeHomePageSection]
+        }
 
         return [startAtHomeSection, customizeFirefoxHomeSection, customizeHomePageSection]
     }
@@ -179,17 +182,18 @@ class HomePageSettingViewController: SettingsTableViewController, FeatureFlaggab
                               children: sectionItems)
     }
 
-    private func setupStartAtHomeSection() -> SettingSection {
-        let prefs = prefs.stringForKey(PrefsKeys.UserFeatureFlagPrefs.StartAtHome) ?? StartAtHomeSetting.afterFourHours.rawValue
-        currentStartAtHomeSetting = StartAtHomeSetting(rawValue: prefs) ?? .afterFourHours
+    private func setupStartAtHomeSection() -> SettingSection? {
+        guard featureFlags.isFeatureEnabled(.startAtHome, checking: .buildOnly) else { return nil }
+        guard let startAtHomeSetting: StartAtHomeSetting = featureFlags.getCustomState(for: .startAtHome) else { return nil }
+        currentStartAtHomeSetting = startAtHomeSetting
 
         typealias a11y = AccessibilityIdentifiers.Settings.Homepage.StartAtHome
 
-        let onOptionSelected: (Bool, StartAtHomeSetting) -> Void = { [weak self] state, option in
-            self?.prefs.setString(option.rawValue, forKey: PrefsKeys.UserFeatureFlagPrefs.StartAtHome)
-            self?.tableView.reloadData()
+        let onOptionSelected: (Bool, StartAtHomeSetting) -> Void = { state, option in
+            self.featureFlags.set(feature: .startAtHome, to: option)
+            self.tableView.reloadData()
 
-            let extras = [TelemetryWrapper.EventExtraKey.preference.rawValue: PrefsKeys.UserFeatureFlagPrefs.StartAtHome,
+            let extras = [TelemetryWrapper.EventExtraKey.preference.rawValue: PrefsKeys.FeatureFlags.StartAtHome,
                           TelemetryWrapper.EventExtraKey.preferenceChanged.rawValue: option.rawValue]
             TelemetryWrapper.recordEvent(category: .action, method: .change, object: .setting, extras: extras)
         }
