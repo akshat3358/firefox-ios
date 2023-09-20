@@ -12,7 +12,7 @@ class FakespotViewModel {
         case loaded(ProductAnalysisData?)
         case error(Error)
 
-        var viewElements: [ViewElement] {
+        fileprivate var viewElements: [ViewElement] {
             var elements: [ViewElement] = []
 
             switch self {
@@ -26,15 +26,19 @@ class FakespotViewModel {
                     .qualityDeterminationCard,
                     .settingsCard]
 
-            case .error:
-                // add error card
-                elements = [.qualityDeterminationCard, .settingsCard]
+            case let .error(error):
+                let baseElements = [ViewElement.qualityDeterminationCard, .settingsCard]
+                if let error = error as NSError?, error.domain == NSURLErrorDomain, error.code == -1009 {
+                    return [.noConnectionError] + baseElements
+                } else {
+                    return [.genericError] + baseElements
+                }
             }
 
             return elements
         }
 
-        var productData: ProductAnalysisData? {
+        fileprivate var productData: ProductAnalysisData? {
             switch self {
             case .loading, .error: return nil
             case .loaded(let data): return data
@@ -44,14 +48,15 @@ class FakespotViewModel {
 
     enum ViewElement {
         case loadingView
-//        case onboarding // card not created yet (FXIOS-7270)
+        case onboarding
         case reliabilityCard
         case adjustRatingCard
         case highlightsCard
         case qualityDeterminationCard
         case settingsCard
         case noAnalysisCard
-        case messageCard
+        case genericError
+        case noConnectionError
     }
 
     private(set) var state: ViewState = .loading {
@@ -63,7 +68,7 @@ class FakespotViewModel {
     var onStateChange: (() -> Void)?
 
     var viewElements: [ViewElement] {
-//        guard isOptedIn else { return [.onboarding] } // card not created yet (FXIOS-7270)
+        guard isOptedIn else { return [.onboarding] }
 
         return state.viewElements
     }
@@ -100,16 +105,24 @@ class FakespotViewModel {
         a11yPrimaryActionIdentifier: AccessibilityIdentifiers.Shopping.ConfirmationCard.primaryAction
     )
 
-    let errorCardViewModel = FakespotMessageCardViewModel(
-        type: .error,
-        title: .Shopping.ErrorCardTitle,
-        description: .Shopping.ErrorCardDescription,
-        primaryActionText: .Shopping.ErrorCardButtonText,
-        a11yCardIdentifier: AccessibilityIdentifiers.Shopping.ErrorCard.card,
-        a11yTitleIdentifier: AccessibilityIdentifiers.Shopping.ErrorCard.title,
-        a11yDescriptionIdentifier: AccessibilityIdentifiers.Shopping.ErrorCard.description,
-        a11yPrimaryActionIdentifier: AccessibilityIdentifiers.Shopping.ErrorCard.primaryAction
+    let noConnectionViewModel = FakespotMessageCardViewModel(
+        type: .warning,
+        title: .Shopping.WarningCardCheckNoConnectionTitle,
+        description: .Shopping.WarningCardCheckNoConnectionDescription,
+        a11yCardIdentifier: AccessibilityIdentifiers.Shopping.NoConnectionCard.card,
+        a11yTitleIdentifier: AccessibilityIdentifiers.Shopping.NoConnectionCard.title,
+        a11yDescriptionIdentifier: AccessibilityIdentifiers.Shopping.NoConnectionCard.description
     )
+
+    let genericErrorViewModel = FakespotMessageCardViewModel(
+        type: .info,
+        title: .Shopping.InfoCardNoInfoAvailableRightNowTitle,
+        description: .Shopping.InfoCardNoInfoAvailableRightNowDescription,
+        a11yCardIdentifier: AccessibilityIdentifiers.Shopping.GenericErrorInfoCard.card,
+        a11yTitleIdentifier: AccessibilityIdentifiers.Shopping.GenericErrorInfoCard.title,
+        a11yDescriptionIdentifier: AccessibilityIdentifiers.Shopping.GenericErrorInfoCard.description
+    )
+
     let settingsCardViewModel = FakespotSettingsCardViewModel()
     let noAnalysisCardViewModel = FakespotNoAnalysisCardViewModel()
 

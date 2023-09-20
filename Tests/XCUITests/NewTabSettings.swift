@@ -6,55 +6,64 @@ import XCTest
 
 let websiteUrl = "www.mozilla.org"
 class NewTabSettingsTest: BaseTestCase {
+    // https://testrail.stage.mozaws.net/index.php?/cases/view/2298623
     // Smoketest
     func testCheckNewTabSettingsByDefault() {
-        waitForExistence(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton], timeout: 5)
+        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton], timeout: 5)
         navigator.nowAt(NewTabScreen)
         navigator.goto(NewTabSettings)
-        waitForExistence(app.navigationBars["New Tab"])
+        mozWaitForElementToExist(app.navigationBars["New Tab"])
         XCTAssertTrue(app.tables.cells["Firefox Home"].exists)
         XCTAssertTrue(app.tables.cells["Blank Page"].exists)
         XCTAssertTrue(app.tables.cells["NewTabAsCustomURL"].exists)
     }
 
+    // https://testrail.stage.mozaws.net/index.php?/cases/view/2298624
     // Smoketest
     func testChangeNewTabSettingsShowBlankPage() {
-        waitForExistence(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton], timeout: 5)
+        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton], timeout: 5)
         navigator.nowAt(NewTabScreen)
         navigator.goto(NewTabSettings)
-        waitForExistence(app.navigationBars["New Tab"])
+        mozWaitForElementToExist(app.navigationBars["New Tab"])
 
         navigator.performAction(Action.SelectNewTabAsBlankPage)
         navigator.performAction(Action.OpenNewTabFromTabTray)
 
-        waitForNoExistence(app.cells[AccessibilityIdentifiers.FirefoxHomepage.TopSites.itemCell])
-        waitForNoExistence(app.collectionViews.cells.staticTexts["YouTube"])
-        waitForNoExistence(app.staticTexts["Highlights"])
+        let addressBar = app.textFields["address"]
+        XCTAssertTrue(addressBar.value(forKey: "hasKeyboardFocus") as? Bool ?? false)
+        let keyboardCount = app.keyboards.count
+        XCTAssert(keyboardCount > 0, "The keyboard is not shown")
+        mozWaitForElementToNotExist(app.cells[AccessibilityIdentifiers.FirefoxHomepage.TopSites.itemCell])
+        mozWaitForElementToNotExist(app.collectionViews.cells.staticTexts["YouTube"])
+        mozWaitForElementToNotExist(app.staticTexts["Highlights"])
     }
 
+    // https://testrail.stage.mozaws.net/index.php?/cases/view/2298625
     func testChangeNewTabSettingsShowFirefoxHome() {
         // Set to history page first since FF Home is default
         waitForTabsButton()
         navigator.nowAt(NewTabScreen)
         navigator.performAction(Action.SelectNewTabAsBlankPage)
         navigator.performAction(Action.OpenNewTabFromTabTray)
-        waitForExistence(app.buttons["urlBar-cancel"], timeout: TIMEOUT)
+        mozWaitForElementToExist(app.buttons["urlBar-cancel"], timeout: TIMEOUT)
         navigator.performAction(Action.CloseURLBarOpen)
         navigator.nowAt(NewTabScreen)
-        waitForNoExistence(app.collectionViews.cells[AccessibilityIdentifiers.FirefoxHomepage.TopSites.itemCell])
+        mozWaitForElementToNotExist(app.collectionViews.cells[AccessibilityIdentifiers.FirefoxHomepage.TopSites.itemCell])
 
         // Now check if it switches to FF Home
         navigator.goto(SettingsScreen)
         navigator.goto(NewTabSettings)
         navigator.performAction(Action.SelectNewTabAsFirefoxHomePage)
         navigator.performAction(Action.OpenNewTabFromTabTray)
-        waitForExistence(app.collectionViews.cells[AccessibilityIdentifiers.FirefoxHomepage.TopSites.itemCell])
+        mozWaitForElementToExist(app.collectionViews.cells[AccessibilityIdentifiers.FirefoxHomepage.TopSites.itemCell])
     }
 
+    // https://testrail.stage.mozaws.net/index.php?/cases/view/2298626
+    // Smoketest
     func testChangeNewTabSettingsShowCustomURL() {
         navigator.nowAt(NewTabScreen)
         navigator.goto(NewTabSettings)
-        waitForExistence(app.navigationBars["New Tab"])
+        mozWaitForElementToExist(app.navigationBars["New Tab"])
         // Check the placeholder value
         let placeholderValue = app.textFields["NewTabAsCustomURLTextField"].value as! String
         XCTAssertEqual(placeholderValue, "Custom URL")
@@ -62,18 +71,18 @@ class NewTabSettingsTest: BaseTestCase {
         // Check the value typed
         app.textFields["NewTabAsCustomURLTextField"].typeText("mozilla.org")
         let valueTyped = app.textFields["NewTabAsCustomURLTextField"].value as! String
-        waitForValueContains(app.textFields["NewTabAsCustomURLTextField"], value: "mozilla")
+        mozWaitForValueContains(app.textFields["NewTabAsCustomURLTextField"], value: "mozilla")
         XCTAssertEqual(valueTyped, "mozilla.org")
         // Open new page and check that the custom url is used
         navigator.performAction(Action.OpenNewTabFromTabTray)
 
         navigator.nowAt(NewTabScreen)
-        // Disabling and modifying this check xcode 11.3 update Issue 5937
-        // Let's just check that website is open
-        waitForExistence(app.webViews.firstMatch, timeout: 20)
-        // waitForValueContains(app.textFields["url"], value: "mozilla")
+        // Check that website is open
+        mozWaitForElementToExist(app.webViews.firstMatch, timeout: 20)
+        mozWaitForValueContains(app.textFields["url"], value: "mozilla")
     }
 
+    // https://testrail.stage.mozaws.net/index.php?/cases/view/2298628
     func testChangeNewTabSettingsLabel() {
         navigator.nowAt(NewTabScreen)
         // Go to New Tab settings and select Custom URL option
@@ -81,9 +90,9 @@ class NewTabSettingsTest: BaseTestCase {
         navigator.nowAt(NewTabSettings)
         // Enter a custom URL
         app.textFields["NewTabAsCustomURLTextField"].typeText(websiteUrl)
-        waitForValueContains(app.textFields["NewTabAsCustomURLTextField"], value: "mozilla")
+        mozWaitForValueContains(app.textFields["NewTabAsCustomURLTextField"], value: "mozilla")
         navigator.goto(SettingsScreen)
-        // Assert that the label showing up in Settings is equal to the URL entered (NOT CURRENTLY WORKING, SHOWING HOMEPAGE INSTEAD)
+        // Assert that the label showing up in Settings is equal to Custom
         XCTAssertEqual(app.tables.cells["NewTab"].label, "New Tab, Custom")
         // Switch to Blank page and check label
         navigator.performAction(Action.SelectNewTabAsBlankPage)
